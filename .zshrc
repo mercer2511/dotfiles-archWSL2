@@ -1,34 +1,34 @@
-# Set the directory we want to store zinit and plugins
+# Establecer el directorio donde queremos almacenar zinit y plugins
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
-# Download Zinit, if it's not there yet
+# Descargar Zinit, si no está presente aún
 if [ ! -d "$ZINIT_HOME" ]; then
     mkdir -p "$(dirname $ZINIT_HOME)"
     git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
 
-# Source/Load zinit
+# Cargar zinit
 source "${ZINIT_HOME}/zinit.zsh"
 
-# Add in zsh plugins
+# Agregar plugins de zsh
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
 
-# Add in snippets
+# Agregar snippets
 zinit snippet OMZL::git.zsh
 zinit snippet OMZP::git
 zinit snippet OMZP::sudo
 zinit snippet OMZP::archlinux
 zinit snippet OMZP::command-not-found
 
-# Load completions
+# Cargar completions
 autoload -Uz compinit && compinit
 
 zinit cdreplay -q
 
-# Set locale
+# Establecer locale
 export LANG=es_ES.UTF-8
 export LC_ALL=es_ES.UTF-8
 
@@ -36,15 +36,15 @@ export LC_ALL=es_ES.UTF-8
 # Asegúrate de tener keychain instalado: sudo pacman -S keychain
 eval "$(keychain --eval ~/.ssh/id_ed25519 --quiet)"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# Para personalizar el prompt, ejecuta `p10k configure` o edita ~/.p10k.zsh.
 eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
 
-# Keybindings
+# Atajos de teclado
 bindkey -e
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 
-# History
+# Historial
 HISTSIZE=5000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
@@ -57,18 +57,18 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
-# Completion styling
+# Estilizado de completions
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
-# Aliases
+# Alias
 alias ls='ls --color'
 
-# Shell integrations
+# Integraciones de shell
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
-# Comentario de prueba
+# Comentario
