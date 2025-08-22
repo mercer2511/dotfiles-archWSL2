@@ -11,7 +11,6 @@ fi
 source "${ZINIT_HOME}/zinit.zsh"
 
 # Agregar plugins de zsh
-zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
@@ -22,10 +21,19 @@ zinit snippet OMZP::git
 zinit snippet OMZP::sudo
 zinit snippet OMZP::archlinux
 zinit snippet OMZP::command-not-found
+zinit snippet OMZP::node
+zinit snippet OMZP::npm
+zinit snippet OMZP::nvm
+zinit snippet OMZP::sdk
+zinit snippet OMZP::ssh-agent
 
 # Cargar completions
 autoload -Uz compinit && compinit
 
+# Cargar zsh-syntax-highlighting al final, después de compinit
+zinit light zsh-users/zsh-syntax-highlighting
+
+# Opcional: completions de fzf-tab integrados en compinit
 zinit cdreplay -q
 
 # Establecer locale
@@ -71,4 +79,11 @@ alias ls='ls --color'
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
-# Comentario
+# Instalacion de nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
