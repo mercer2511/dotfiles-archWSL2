@@ -26,6 +26,9 @@ zinit snippet OMZP::npm
 zinit snippet OMZP::nvm
 zinit snippet OMZP::sdk
 zinit snippet OMZP::ssh-agent
+zinit snippet OMZP::pyenv
+zinit snippet OMZP::python
+zinit snippet OMZP::mvn
 
 # Cargar completions
 autoload -Uz compinit && compinit
@@ -79,6 +82,12 @@ alias ls='ls --color'
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
+# Pyenv configuration mejorada - Gestor de versiones Python
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"  # Para shells no interactivos
+eval "$(pyenv init -)"       # Para shells interactivos
+
 # Instalacion de nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -87,3 +96,5 @@ export NVM_DIR="$HOME/.nvm"
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# Comentario de prueba
