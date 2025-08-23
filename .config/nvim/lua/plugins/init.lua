@@ -125,5 +125,13 @@ return {
   {
     "christoomey/vim-tmux-navigator",
     lazy = false,
+  },
+  -- Agregar a ~/.config/nvim/lua/plugins/init.lua:
+  {
+    "kdheepak/lazygit.nvim",
+    cmd = "LazyGit",
+    keys = {
+      { "<leader>gg", "<cmd>LazyGit<CR>", desc = "LazyGit" },
+    },
   }
 }
