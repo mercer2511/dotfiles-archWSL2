@@ -1,12 +1,15 @@
 # 🏠 Dotfiles
 
-Configuraciones personalizadas para **Arch Linux WSL2** con Zsh, Oh My Posh y Windows Terminal.
+Configuraciones personalizadas para **Arch Linux WSL2** con Zsh, Oh My Posh, NeoVim (NvChad), tmux y Windows Terminal.
 
 ## 🖥️ Entorno de Desarrollo
 
 Este setup está diseñado específicamente para:
 - **Sistema**: Arch Linux en WSL2 (Windows 11)
 - **Terminal**: Windows Terminal con temas Catppuccin
+- **Editor**: NeoVim con NvChad y personalizaciones para Java
+- **Multiplexor**: tmux con tema Catppuccin
+- **Shell**: Zsh con Oh My Posh
 - **Compatibilidad**: Modo claro/oscuro automático
 
 ## 📋 Requisitos Previos
@@ -66,7 +69,28 @@ sudo wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/
 sudo chmod +x /usr/local/bin/oh-my-posh
 ```
 
-### 4. Configurar Windows Terminal (Windows 11)
+### 4. Instalar NeoVim y tmux
+```bash
+# Instalar NeoVim y tmux
+sudo pacman -S neovim tmux
+
+# Instalar LazyGit para integración Git
+sudo pacman -S lazygit
+
+# Instalar ripgrep y fd (dependencias para búsquedas)
+sudo pacman -S ripgrep fd
+```
+
+### 5. Instalar NvChad (base para NeoVim)
+```bash
+# Hacer backup de configuración existente (si existe)
+[ -d ~/.config/nvim ] && mv ~/.config/nvim ~/.config/nvim.bak
+
+# Clonar NvChad
+git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1
+```
+
+### 6. Configurar Windows Terminal (Windows 11)
 
 #### Instalar Fuentes Nerd Font en Windows
 ```powershell
@@ -143,7 +167,7 @@ Agregar a tu `settings.json` de Windows Terminal:
 }
 ```
 
-### 5. Configurar SSH (Opcional)
+### 7. Configurar SSH (Opcional)
 ```bash
 # Generar clave SSH si no existe
 ssh-keygen -t ed25519 -C "tu-email@example.com"
@@ -162,6 +186,7 @@ stow .
 
 # Verificar symlinks creados
 ls -la ~ | grep "\->"
+ls -la ~/.config/ | grep "\->"
 ```
 
 ### Verificar Instalación
@@ -174,6 +199,22 @@ oh-my-posh version
 
 # Verificar que el tema se carga correctamente
 echo $PROMPT_COMMAND
+
+# Verificar NeoVim
+nvim --version
+
+# Verificar tmux
+tmux -V
+```
+
+### Configuración Inicial de NeoVim
+```bash
+# Iniciar NeoVim por primera vez para instalar plugins
+nvim
+
+# Ejecutar dentro de NeoVim para verificar estado de plugins
+:checkhealth
+:Mason
 ```
 
 ## 📁 Estructura del Proyecto
@@ -181,11 +222,29 @@ echo $PROMPT_COMMAND
 ```
 dotfiles/
 ├── .stow-local-ignore        # Archivos ignorados por Stow
-├── .config/
-│   └── ohmyposh/
-│       ├── base.json         # Configuración base
-│       └── zen.toml          # Tema minimalista personalizado
 ├── .zshrc                    # Configuración Zsh con Zinit
+├── .config/
+│   ├── nvim/                 # Configuración NeoVim/NvChad
+│   │   ├── init.lua          # Archivo principal de configuración
+│   │   ├── lazy-lock.json    # Versiones fijas de plugins
+│   │   └── lua/              # Configuraciones modulares
+│   │       ├── autocmds.lua  # Comandos automáticos
+│   │       ├── chadrc.lua    # Configuración NvChad
+│   │       ├── mappings.lua  # Keymaps personalizados
+│   │       ├── options.lua   # Opciones de NeoVim
+│   │       ├── configs/      # Configuraciones específicas
+│   │       │   ├── conform.lua     # Formateo de código
+│   │       │   ├── lazy.lua        # Gestor de plugins
+│   │       │   └── lspconfig.lua   # Servidores LSP
+│   │       └── plugins/      # Plugins adicionales
+│   │           └── init.lua  # Configuración de plugins
+│   ├── ohmyposh/
+│   │   ├── base.json         # Configuración base
+│   │   └── zen.toml          # Tema minimalista personalizado
+│   └── tmux/                 # Configuración de tmux
+│       ├── tmux.conf         # Archivo principal de configuración
+│       └── plugins/          # Plugins de tmux
+│           └── catppuccin-tmux/  # Tema Catppuccin para tmux
 └── README.md                 # Este archivo
 ```
 
@@ -209,12 +268,53 @@ dotfiles/
 - **Transient prompt** para historial limpio
 - **Compatible con temas claro/oscuro** de Windows Terminal
 
+### NeoVim (NvChad personalizado)
+- **Base**: NvChad para configuración inicial y UI optimizada
+- **LSP**: Servidores de lenguaje configurados para Java y otros lenguajes
+- **Personalizaciones Java**:
+  - Detección automática de proyectos Maven/Gradle
+  - Keymaps específicos para compilación y ejecución
+  - Integración con tmux para ejecución interactiva
+- **Plugins destacados**:
+  - LazyGit integrado (`<leader>gg`)
+  - Formateo de código automático
+  - Autocompletado inteligente
+
+### tmux con Catppuccin
+- **Tema**: Catppuccin para consistencia visual
+- **Keybindings**: Optimizados para desarrolladores
+- **Integración**: Con NeoVim para movimiento entre paneles
+- **Sesiones persistentes**: Para desarrollo continuo
+
 ### Herramientas Integradas
 - **FZF**: Búsqueda fuzzy en archivos, historial y comandos
 - **Zoxide**: Navegación inteligente con `cd` mejorado
 - **Keychain**: Gestión automática de claves SSH en WSL2
+- **LazyGit**: TUI para Git integrado en NeoVim
 
-## 🎨 Personalización
+## � Keymaps Principales
+
+### NeoVim - General
+- `<Space>` - Tecla líder
+- `<C-h/j/k/l>` - Navegar entre splits/tmux
+- `<C-s>` - Guardar archivo
+
+### NeoVim - Java
+- `<leader>jr` - Compilar y ejecutar (no interactivo)
+- `<leader>mi` - Ejecutar en terminal interactivo (para Scanner)
+- `<leader>mx` - Ejecutar en nueva ventana tmux
+- `<leader>jf` - Formatear código Java
+- `<leader>jc` - Compilar proyecto
+- `<leader>mp` - Empaquetar proyecto Maven
+
+### tmux
+- `<C-a>` - Prefijo tmux
+- `<C-a>c` - Nueva ventana
+- `<C-a>|` - Split vertical
+- `<C-a>-` - Split horizontal
+- `<C-a>h/j/k/l` - Navegar entre paneles
+
+## �🎨 Personalización
 
 ### Cambiar Configuración de Oh My Posh
 ```bash
@@ -223,6 +323,27 @@ nano ~/.config/ohmyposh/zen.toml
 
 # Recargar configuración
 source ~/.zshrc
+```
+
+### Personalizar NeoVim
+```bash
+# Editar keymaps
+nvim ~/.config/nvim/lua/mappings.lua
+
+# Modificar plugins
+nvim ~/.config/nvim/lua/plugins/init.lua
+
+# Actualizar opciones
+nvim ~/.config/nvim/lua/options.lua
+```
+
+### Modificar Configuración tmux
+```bash
+# Editar archivo principal
+nvim ~/.config/tmux/tmux.conf
+
+# Aplicar cambios sin reiniciar
+tmux source-file ~/.config/tmux/tmux.conf
 ```
 
 ### Sincronización con Tema del Sistema
@@ -242,13 +363,39 @@ git clone https://aur.archlinux.org/yay.git
 cd yay && makepkg -si
 ```
 
-#### Si la instalación manual falla:
-```bash
-# Verificar permisos
-sudo chmod +x /usr/local/bin/oh-my-posh
+### NeoVim/NvChad
 
-# Verificar que esté en PATH
-which oh-my-posh
+#### Plugins no se instalan:
+```bash
+# Dentro de NeoVim
+:Lazy sync
+
+# O reinstalar desde cero
+rm -rf ~/.local/share/nvim
+rm -rf ~/.config/nvim
+git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1
+# Aplicar dotfiles nuevamente con stow
+```
+
+#### LSP no funciona:
+```bash
+# Verificar instalación de servidores LSP
+:Mason
+
+# Instalar manualmente
+:MasonInstall jdtls pyright
+```
+
+### tmux
+
+#### Tema Catppuccin no se carga:
+```bash
+# Reiniciar tmux completamente
+tmux kill-server
+tmux
+
+# O recargar configuración
+tmux source-file ~/.config/tmux/tmux.conf
 ```
 
 ### WSL2 Específicos
@@ -266,22 +413,18 @@ rm -rf ~/.local/share/zinit
 2. **Reiniciar completamente** Windows Terminal
 3. **Verificar configuración** en `settings.json`
 
-### Problemas de Rendimiento
-```bash
-# Si el prompt es lento, optimizar Git
-git config --global oh-my-posh.source cli
-
-# O deshabilitar información de Git temporalmente
-# Editar ~/.config/ohmyposh/zen.toml:
-# fetch_status = false
-```
-
 ## 📝 Notas Importantes
 
 ### Primera Configuración
-- **Primer inicio**: Zinit descargará plugins automáticamente (1-2 minutos)
+- **Primer inicio NeoVim**: Instalará plugins automáticamente (2-3 minutos)
+- **Primer inicio Zsh**: Zinit descargará plugins automáticamente (1-2 minutos)
 - **Rendimiento**: Optimizado para WSL2, carga rápida después de la configuración inicial
 - **Compatibilidad**: Probado exclusivamente en Arch Linux WSL2 con Windows 11
+
+### Desarrollo Java
+- Configuración optimizada para proyectos Maven y Gradle
+- LSP con autocompletado, análisis de código y navegación
+- Keymaps específicos para compilación y ejecución
 
 ### Características WSL2
 - Integración completa con sistema de archivos Windows
@@ -292,6 +435,7 @@ git config --global oh-my-posh.source cli
 - **Usar yay** para Oh My Posh (más fácil de actualizar)
 - **Instalar fuentes en Windows** para mejor compatibilidad
 - **Configurar temas en Windows Terminal** para cambio automático
+- **Mantener sesiones tmux** para desarrollo continuo
 
 ## 🤝 Contribuir
 
